@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starbucks.admin.dao.TbUserDao">
+    <sql id="select">
+      a.id,
+      a.username,
+      a.password,
+      a.phone,
+      a.email,
+      a.created,
+      a.updated
+    </sql>
+
+    <select id="search" resultType="TbUser" >
+        SELECT
+        <include refid="select"/>
+        FROM
+        tb_user AS a
+        <where>
+            <if test="username != null and username != ''">
+                AND username LIKE concat('%', #{username}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE concat('%', #{phone}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE concat('%', #{email}, '%')
+            </if>
+        </where>
+        LIMIT #{start}, #{length}
+    </select>
+
+    <select id="selectAll" resultType="TbUser" >
+        SELECT
+        <include refid="select"/>
+        FROM
+        tb_user AS a
+
+
+    </select>
+
+    <select id="getById" resultType="TbUser">
+        SELECT
+        <include refid="select"/>
+        FROM tb_user as a
+        WHERE id = #{id};
+    </select>
+
+
+    <select id="count" resultType="java.lang.Integer">
+        select
+        count(*)
+        from tb_user
+        <where>
+            <if test="username != null and username != ''">
+                AND username LIKE concat('%', #{username}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE concat('%', #{phone}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE concat('%', #{email}, '%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="add" parameterType="TbUser">
+        insert into
+        tb_user
+        (
+          id,
+          username,
+          password,
+          phone,
+          email,
+          created,
+          updated
+        )
+        values
+        (
+          #{id},
+          #{username},
+          #{password},
+          #{phone},
+          #{email},
+          #{created},
+          #{updated}
+        )
+    </insert>
+
+    <delete id="delete" parameterType="TbUser">
+        delete
+          from
+            tb_user
+          where
+            id = #{id}
+    </delete>
+
+    <delete id="batchDelete">
+        DELETE
+        FROM tb_user
+        WHERE id IN
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateInfo" parameterType="TbUser">
+        update
+          tb_user
+        set
+          phone = #{phone},
+          username = #{username},
+          email = #{email},
+          updated = #{updated}
+        where
+          id = #{id}
+    </update>
+</mapper>
